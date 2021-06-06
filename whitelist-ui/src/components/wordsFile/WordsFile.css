@@ -1,0 +1,58 @@
+.words-file-container {
+	height: calc(100% - 30px);
+	width: 100%;
+	border-radius: 3px;
+	max-width: 515px;
+	background-color: white;
+	display: flex;
+    align-items: start;
+	flex-wrap: wrap;
+	padding: 20px 45px;
+	padding-right: 60px;
+	position: relative;
+	align-content: flex-start;
+}
+
+
+.word {
+	margin-top: 20px;
+	animation-duration: 0.4s;
+}
+
+.word:after {
+    position:absolute;
+	left: 43px;
+    content: " ";
+    display:block;
+    border-bottom: 3px solid rgb(241, 240, 240);
+	width: calc(100% - 86px);
+	pointer-events:none;
+}
+
+.word:hover {
+	font-weight: bolder;
+}
+
+.word-to-add:hover {
+	color: #66bb6a;
+
+}
+
+.word-to-remove:hover {
+	color: #ef534f;
+}
+
+.eraser-corsor {
+	  /* cursor: url('../../assets/images/cursor.cur') 10 20, auto; */
+	  cursor: pointer;
+}
+
+.pencil-corsor{
+	/* cursor: url('../../assets/images/cursor2.cur') 10 25, auto; */
+	cursor: pointer;
+}
+
+.__react_component_tooltip  {
+	font-weight: bold;
+	background-color: #585858 !important;
+}

@@ -1,0 +1,47 @@
+.index-page-main-section {
+	height: calc(100% - 120px);
+	padding: 0px 65px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.index-page {
+	background: linear-gradient( rgba(70,70,70,1) 0%, rgba(35,46,53,1) 53%, rgba(86,111,123,1) 100%);
+}
+
+.good-image {
+	height: 125px;
+	position: relative;
+	top: -105px;
+	animation: fadeInRight ease 1.5s;
+}
+
+.bad-image {
+	height: 125px;
+	position: relative;
+	top: -105px;
+	animation: fadeInLeft ease 1.5s;
+}
+
+.index-page-text {
+	opacity: 1;
+	position: relative;
+	top: -50px;
+}
+
+@keyframes fadeIn {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+
+@keyframes fadeInRight {
+0% {opacity:0; transform: translateX(100%);}
+100% {opacity:1; transform: translateX(0%);}
+}
+
+@keyframes fadeInLeft {
+0% {opacity:0; transform: translateX(-100%);}
+100% {opacity:1; transform: translateX(0%);}
+}

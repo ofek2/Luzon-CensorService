@@ -1,0 +1,46 @@
+.home-page-main-section {
+	height: calc(100% - 120px);
+	padding: 0px 65px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.good-image {
+	height: 125px;
+	position: relative;
+	top: -105px;
+	animation: fadeInRight ease 1.5s;
+}
+
+.bad-image {
+	height: 125px;
+	position: relative;
+	top: -105px;
+	animation: fadeInLeft ease 1.5s;
+}
+
+.home-page-text {
+	opacity: 0;
+	position: relative;
+	top: -70px;
+	animation: fadeIn ease 0.8s;
+	animation-delay: 1s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+0% {opacity:0;}
+100% {opacity:1;}
+}
+
+
+@keyframes fadeInRight {
+0% {opacity:0; transform: translateX(100%);}
+100% {opacity:1; transform: translateX(0%);}
+}
+
+@keyframes fadeInLeft {
+0% {opacity:0; transform: translateX(-100%);}
+100% {opacity:1; transform: translateX(0%);}
+}

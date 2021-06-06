@@ -1,0 +1,27 @@
+.filter-words-page {
+	max-width: 1200px;
+    margin-right: auto;
+	margin-left: auto;
+	display: flex;
+	justify-content: space-around;
+	margin-top: 15px;
+	position: relative;
+}
+
+.filter-words-footer {
+	height: 20px;
+	background-color: #2b2d39;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	bottom: 0px;
+	/* animation: fadeInBottom 1.4s ease-in; */
+}
+
+@keyframes fadeInBottom {
+	0% {transform: translateY(100%); opacity: 0;}
+	100% {transform: translateX(0); opacity: 1;}
+}
+

@@ -1,0 +1,90 @@
+.add-words-input {
+    background-color: #464646;
+    box-shadow: 0 16px 80px 8px rgb(86 91 115 / 15%);
+    border-radius: 4px;
+    padding: 2rem;
+    color: white;
+    cursor: text;
+}
+
+.add-words-textarea {
+    background-color: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    resize: none;
+    height: 175px;
+    width: 100%;
+    font-family: VarelaRound;
+    caret-color: transparent;
+    
+}
+
+.caret {
+    color: white;
+    transition-duration: 0.4s;
+}
+
+.add-words-textarea:focus ~ .caret {
+    color: orange;
+}
+
+.add-words-textarea::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: white;
+}
+
+.blinking-cursor {
+    font-weight: 100;
+    font-size: 20px;
+    color: white;
+    -webkit-animation: 1s blink step-end infinite;
+    -moz-animation: 1s blink step-end infinite;
+    -ms-animation: 1s blink step-end infinite;
+    -o-animation: 1s blink step-end infinite;
+    animation: 1s blink step-end infinite;
+  }
+  
+  @keyframes blink {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+    }
+  }
+  
+  @-moz-keyframes blink {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+    }
+  }
+  
+  @-webkit-keyframes blink {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+    }
+  }
+  
+  @-ms-keyframes blink {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+    }
+  }
+  
+  @-o-keyframes blink {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+    }
+  }

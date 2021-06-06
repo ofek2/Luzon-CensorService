@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+  font-family: VarelaRound !important;
+}
+
+@font-face {
+  font-family: "VarelaRound";
+  src: local("VarelaRound"), url(./assets/fonts/VarelaRound-Regular.ttf) format('truetype');
+}

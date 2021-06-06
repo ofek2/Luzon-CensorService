@@ -1,0 +1,56 @@
+.word-row-container:hover .action-container{
+	opacity: 1;
+}
+
+.action-container {
+	opacity: 0;
+	transition-duration: 0.2s;
+}
+
+.spinner {
+
+	animation-name: spin;
+	animation-duration: 1500ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear; 
+
+  }
+  
+  @keyframes spin {
+	  from {
+		  transform:rotate(0deg);
+	  }
+	  to {
+		  transform:rotate(360deg);
+	  }
+  }
+
+.word-row-enter {
+	opacity: 0;
+  }
+  .word-row-enter-active {
+	opacity: 1;
+	transition: opacity 500ms;
+  }
+  .word-row-exit {
+	opacity: 0;
+  }
+  .word-row-exit-active {
+	opacity: 0;
+	transition: opacity 500ms;
+  }
+
+.word-chain-enter {
+	opacity: 0;
+  }
+  .word-chain-enter-active {
+	opacity: 1;
+	transition: opacity 800ms;
+  }
+  .word-chain-exit {
+	opacity: 1;
+  }
+  .word-chain-exit-active {
+	opacity: 0;
+	transition: opacity 800ms;
+  }

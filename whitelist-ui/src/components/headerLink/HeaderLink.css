@@ -1,0 +1,33 @@
+.header-link-container {
+	padding: 8px 12px;
+	margin: 0px 8px;
+	text-decoration: none;
+	color: white;
+  font-size: 14px;
+  transition-duration: 0.2s;
+  background-color: #585858;
+  border-radius: 3px;
+  opacity: 0.8;
+}
+
+.header-link-container:hover {
+  opacity: 1;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+a:-webkit-any-link {
+    color: -webkit-link;
+    cursor: pointer;
+    text-decoration: none;
+}
