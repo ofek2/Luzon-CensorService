@@ -62,10 +62,30 @@ services:
       IS_PRODUCTION: "false"
       MAX_PAGE_SIZE: 50
       STORAGE_TYPE: "mongo"
+      ALLOWED_USERS: "user1@example.com"
+      FRONTEND_URL: "whitelist-ui:80"
       MONGO_URI: "mongodb://mongo1:30001,mongo2:30002,mongo3:30003/my-replica-set"
       MONGO_DATABASE: "development"
+      SAML_ENTRY_POINT: "http://localhost:8080/simplesaml/saml2/idp/SSOService.php"
+      SAML_ISSUER: "http://localhost:9002/metadata.xml"
+      SAML_CALLBACK_URL: "http://localhost:9002/auth/saml/callback"
+      METADATA_ENTITY_ID: "http://localhost:9002/metadata.xml"
+      PROFILE_EXTRACTOR_ID: "email"
   whitelist-ui:
     image: whitelist-ui
+    build: ./whitelist-ui/
     stdin_open: true
     ports: 
-      - 3000:3000
+      - 80:80
+  testsamlidp_idp:
+    image: kristophjunge/test-saml-idp
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: "http://localhost:9002/metadata.xml"
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: "http://localhost:9002/auth/saml/callback"
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: "http://localhost/simplesaml/module.php/saml/sp/saml2-logout.php/test-sp"
+      SAML_ISSUER: "http://localhost:9002/metadata.xml"
+      SAML_CALLBACK_URL: "http://localhost:9002/auth/saml/callback"
+      SIMPLESAMLPHP_ADMIN_PASSWORD: test
+      SIMPLESAMLPHP_SECRET_SALT: salt
+    ports:
+    - "8080:8080"

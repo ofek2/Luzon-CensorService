@@ -50,6 +50,9 @@ class MongoComposer implements IDalComposer {
         return this.api;
     }
 
+    public get client(): MongoClientFacade {
+        return this.mongoClientFacade;
+    }
 }
 
 export { MongoComposer }

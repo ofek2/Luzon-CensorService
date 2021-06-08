@@ -3,7 +3,10 @@ import { dalFactory } from "./src/dal/DalFactory";
 import { Configuration, exctractStorageConfiguration, IConfiguration } from "./Configuration";
 import { applyRoutesMiddleware } from "./src/middlewares/applyRoutesMiddleware";
 import { applyThirdPartyMiddleware } from "./src/middlewares/applyThirdPartyMiddleware";
+import { applySamlMiddleware } from "./src/middlewares/applySamlMiddleware";
 import { logger } from "./src/clients/loggerClient";
+import proxy from "express-http-proxy";
+import { passportClient } from "./src/clients/passportClient";
 
 /**
  * Run all dependencies code and create & run an express application.
@@ -18,7 +21,15 @@ function createExpressApplication(configuration: IConfiguration) {
         .then(message => {
             logger.info(message);
             applyThirdPartyMiddleware(app);
+            applySamlMiddleware(app);
             applyRoutesMiddleware(app);
+            app.get("/unauthorized", (req, res, next) => {
+    			res.sendFile('/app/unauthorized.html');
+            })
+            app.all("/*",
+                passportClient.createLoggedInUserAuthorizeMiddleware({shouldRedirectToHome: true}),
+                proxy(Configuration.application.frontendUrl)
+            );
             app.listen( application.port, () => {
                 logger.info(`Application started at port: ${ application.port }`)
             });
