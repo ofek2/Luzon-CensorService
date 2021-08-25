@@ -10,37 +10,44 @@ import { WhitelistService } from "./src/services/WhitelistService";
  * Run all dependencies code and create & run an express application.
  * @param configuration the configuration for the application 
  */
-function createExpressApplication(configuration: IConfiguration) {
+function createExpressApplication(configuration: IConfiguration): Promise<any> {
     const app = express();
     const { application, storage  } = configuration;
+    const creationPromise = new Promise((resolve, reject) => {
+        // Initialize the dal compeser according to the configuration
+        dalFactory.initialize(storage.type, exctractStorageConfiguration(storage.type))
+            .then(message => {
+                logger.info(`Initializeing WhitelistService`)
+                WhitelistService.initialize()
+                    .then(message => {
+                        logger.info(message);
+                        applyThirdPartyMiddleware(app);
+                        applyRoutesMiddleware(app);
+                        app.listen( application.port, () => {
+                            logger.info(`Application started at port: ${ application.port }`)
+                        });
+                        resolve("Application succeed to build");
+                    })
+                    .catch(error => {
+                        logger.error(`WhitelistService Error: ${error}, stack: ${error.stack}}`);
+                        reject(error);
+                    })
+            })
+            .catch(error => {
+                logger.error(`DalFactory error: failed open connection to storage, error: ${error}, stack: ${error.stack}}`);
+                reject(error);
+            });
+    });
     
-    // Initialize the dal compeser according to the configuration
-    dalFactory.initialize(storage.type, exctractStorageConfiguration(storage.type))
-        .then(message => {
-            WhitelistService.initialize()
-                .then(message => {
-                    logger.info(message);
-                    applyThirdPartyMiddleware(app);
-                    applyRoutesMiddleware(app);
-                    app.listen( application.port, () => {
-                        logger.info(`Application started at port: ${ application.port }`)
-                    });
-                })
-                .catch(error => {
-                    logger.error(`WhitelistService Error: ${error}, stack: ${error.stack}}`);
-                })
-        })
-        .catch(error => {
-            logger.error(`DalFactory error: failed open connection to storage, error: ${error}, stack: ${error.stack}}`);
-        });
+    return creationPromise;
 }
 
 /**
  * The main start up function.
  */
-function main() {
+async function main() {
     logger.info("The application is trying to build up");
-    createExpressApplication(Configuration);
+    await createExpressApplication(Configuration);
     process.on("unhandledRejection", (error: any) => {
         logger.error(`Unexpected error: ${error}, stack: ${error.stack}`);
     });

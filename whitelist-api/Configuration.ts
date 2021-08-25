@@ -36,6 +36,7 @@ interface IMetadata {
 }
 
 interface IAuthenticationConfiguration {
+    shouldUseAuth: boolean,
     saml: SamlConfig,
     profileExtractor: IProfileExtractor,
     metadata: IMetadata
@@ -63,6 +64,7 @@ const Configuration: IConfiguration = {
         },
     },
     authentication: {
+        shouldUseAuth: process.env.SHOULD_USE_AUTH === "true" || false,
         saml: {
             entryPoint:
                 process.env.SAML_ENTRY_POINT ||

@@ -60,26 +60,31 @@ class PassportClient {
 		};
 	}
 
-	public createLoggedInUserAuthorizeMiddleware(args: { shouldRedirectToHome: boolean}) {
+	public createLoggedInUserAuthorizeMiddleware(args: { shouldRedirectToHome: boolean, shouldActive: boolean}) {
 		return (req: Request, res: Response, next: (error?: IErrorMetadata) => void) => {
 			const { user }: any = req;
 		
-			if (!user) {
-				logger.error("Authorization error: user tried to access route without user on the session")
-				if(args.shouldRedirectToHome) {
-					res.redirect("/auth/saml");
+			if(args.shouldActive) {
+				if (!user) {
+					logger.error("Authorization error: user tried to access route without user on the session")
+					if(args.shouldRedirectToHome) {
+						res.redirect("/auth/saml");
+					} else {
+						res.redirect("/unauthorized")
+					}
+				} else if(Configuration.application.allowedUsers.findIndex(userId => userId === user.id) === -1) {
+					if(args.shouldRedirectToHome) {
+						res.redirect("/unauthorized");
+					} else {
+						res.status(StatusCodes.UNAUTHORIZED).send();
+					}
 				} else {
-					res.redirect("/unauthorized")
-				}
-			} else if(Configuration.application.allowedUsers.findIndex(userId => userId === user.id) === -1) {
-				if(args.shouldRedirectToHome) {
-					res.redirect("/unauthorized");
-				} else {
-					res.status(StatusCodes.UNAUTHORIZED).send();
+					next();
 				}
 			} else {
 				next();
 			}
+			
 		}
 	}
 

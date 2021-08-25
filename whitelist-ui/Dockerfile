@@ -3,21 +3,21 @@
 # 2) nginx stage to serve frontend assets
 
 # Name the node stage "builder"
-FROM node:10 AS builder
+FROM node:14.17-alpine3.12 AS builder
 # Set working directory
 WORKDIR /app
 # Copy all files from current directory to working dir in image
 COPY . .
 # install node modules and build assets
-RUN yarn install && yarn build
+RUN npm install && npm run-script build
 
 # nginx state for serving content
-FROM nginx:alpine
+FROM nginxinc/nginx-unprivileged
 # Set working directory to nginx asset directory 
 WORKDIR /usr/share/nginx/html
 
 # Remove default nginx static assets
-RUN rm -rf ./*
+# RUN rm -rf ./*
 # Copy static assets from builder stage
 COPY --from=builder /app/build .
 # Containers run nginx with global directives and daemon off

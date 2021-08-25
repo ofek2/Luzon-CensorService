@@ -1,5 +1,4 @@
 import { Application, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
 import { Configuration } from "../../Configuration";
 import { passportClient } from "../clients/passportClient";
 

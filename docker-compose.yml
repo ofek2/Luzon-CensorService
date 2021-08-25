@@ -63,20 +63,20 @@ services:
       MAX_PAGE_SIZE: 50
       STORAGE_TYPE: "mongo"
       ALLOWED_USERS: "user1@example.com"
-      FRONTEND_URL: "whitelist-ui:80"
+      FRONTEND_URL: "whitelist-ui:8080"
       MONGO_URI: "mongodb://mongo1:30001,mongo2:30002,mongo3:30003/my-replica-set"
       MONGO_DATABASE: "development"
       SAML_ENTRY_POINT: "http://localhost:8080/simplesaml/saml2/idp/SSOService.php"
-      SAML_ISSUER: "http://localhost:9002/metadata.xml"
       SAML_CALLBACK_URL: "http://localhost:9002/auth/saml/callback"
       METADATA_ENTITY_ID: "http://localhost:9002/metadata.xml"
       PROFILE_EXTRACTOR_ID: "email"
+      SHOULD_USE_AUTH: "true"
   whitelist-ui:
     image: whitelist-ui
     build: ./whitelist-ui/
     stdin_open: true
     ports: 
-      - 80:80
+      - 80:8080
   testsamlidp_idp:
     image: kristophjunge/test-saml-idp
     environment:

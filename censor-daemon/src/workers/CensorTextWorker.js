@@ -2,8 +2,8 @@ const { workerData, parentPort } = require('worker_threads');
 
 class Censor {
 	constructor(args) {
-        const { whitelist, fixedAllowedWords, fixedAllowedChars, prefixAllowedLettersCount, 
-            suffixAllowedLettersCount, mixSpaceBetweenPrefixAndSuffix, replaceString } = args;
+        const { whitelist, fixedAllowedWords, fixedAllowedChars, allowedWordsPrefix, prefixAllowedLettersCount, 
+            suffixAllowedLettersCount, mixSpaceBetweenPrefixAndSuffix, replaceString, withChangeWordLength } = args;
 
 		this.whitelist = whitelist;
 		this.fixedAllowedWords = fixedAllowedWords;
@@ -12,19 +12,30 @@ class Censor {
 		this.suffixAllowedLettersCount = suffixAllowedLettersCount;
 		this.mixSpaceBetweenPrefixAndSuffix = mixSpaceBetweenPrefixAndSuffix;
 		this.replaceString = replaceString;
+		this.withChangeWordLength = withChangeWordLength;
+		this.allowedWordsPrefix = allowedWordsPrefix;
 		this.droppedWords = {};
 	}
 
 	censorWord(word, withSpace) {
 		let censoredWord = '';
+		let randomCount = Math.random() * (6 - this.mixSpaceBetweenPrefixAndSuffix) + this.mixSpaceBetweenPrefixAndSuffix; // If we wand random * this will be the range 
+		let alreadyAddedRandomChars = false;
 		this.droppedWords[word] = true;
 
 		if (word.length >= this.suffixAllowedLettersCount + this.prefixAllowedLettersCount + this.mixSpaceBetweenPrefixAndSuffix) {
 			for (let i = 0; i < word.length; i++) {
 				if (i < this.prefixAllowedLettersCount) {
 					censoredWord += word[i];
+				} else if(i >= word.length - this.suffixAllowedLettersCount) {
+					censoredWord += word[i];
 				} else {
-					censoredWord += this.replaceString;
+					if(this.withChangeWordLength && !alreadyAddedRandomChars) {
+						censoredWord += this.replaceString.repeat(randomCount);
+						alreadyAddedRandomChars = true;
+					} else if(!this.withChangeWordLength) {
+						censoredWord += this.replaceString;
+					}
 				}
 			}
 		} else {
@@ -66,7 +77,7 @@ class Censor {
 		if (isFoundSequence === true) {
 			return {
 				isFoundSequence: isFoundSequence,
-				censorText: `${this.censorWord(currentWord, false)}${censorText}`,
+				censorText: `${this.censorWord(currentWord, false)} ${censorText}`,
 				iJump: i + iJump
 			};
 		} else {
@@ -77,6 +88,25 @@ class Censor {
 			};
 		}
 
+	}
+
+	retriveWordFromWhitelist(word) {
+		let wordValue = this.whitelist[word];
+
+		if(wordValue === undefined || wordValue === null) {
+			for (let prefix of this.allowedWordsPrefix) {
+				if(word.substring(0, prefix.length) === prefix) {
+					const currentKey = word.substring(prefix.length, word.length);
+
+					wordValue = this.whitelist[currentKey];
+					if(wordValue === undefined || wordValue === null) {
+						break;
+					}
+				}
+			}
+		}
+		console.log(wordValue);
+		return wordValue;
 	}
 
 	replaceFromJson(source) {
@@ -99,8 +129,8 @@ class Censor {
 					if (this.fixedAllowedWords[currentWord] === true) {
 						finalCensorText += currentWord;
 						currentWord = '';
-					} else if (typeof this.whitelist[currentWord] === 'object') { // When you have black list for the word
-						const { isFoundSequence, censorText, iJump } = this.recursiveWordsCensor(source, this.whitelist[currentWord], i);
+					} else if (typeof this.retriveWordFromWhitelist(currentWord) === 'object') { // When you have black list for the word
+						const { isFoundSequence, censorText, iJump } = this.recursiveWordsCensor(source, this.retriveWordFromWhitelist(currentWord), i);
 
 						if (isFoundSequence === true) {
 							finalCensorText += `${this.censorWord(currentWord, false)}${censorText}`;
@@ -110,7 +140,7 @@ class Censor {
 							finalCensorText += `${currentWord}`;
 							currentWord = '';
 						}
-					} else if (this.whitelist[currentWord] === true) {
+					} else if (this.retriveWordFromWhitelist(currentWord) === true) {
 						finalCensorText += currentWord;
 						currentWord = '';
 					} else {
@@ -130,8 +160,8 @@ class Censor {
 						if (this.fixedAllowedWords[currentWord] === true) { // When you don't have black list to the word
 							finalCensorText += `${currentWord} `;
 							currentWord = '';
-						} else if (typeof this.whitelist[currentWord] === 'object') { // When you have black list for the word
-							const { isFoundSequence, censorText, iJump } = this.recursiveWordsCensor(source, this.whitelist[currentWord], i);
+						} else if (typeof this.retriveWordFromWhitelist(currentWord) === 'object') { // When you have black list for the word
+							const { isFoundSequence, censorText, iJump } = this.recursiveWordsCensor(source, this.retriveWordFromWhitelist(currentWord), i);
 
 							if (isFoundSequence === true) {
 								finalCensorText += `${this.censorWord(currentWord, false)} ${censorText}`;
@@ -141,7 +171,7 @@ class Censor {
 								finalCensorText += `${currentWord} `;
 								currentWord = '';
 							}
-						} else if (this.whitelist[currentWord] === true) {
+						} else if (this.retriveWordFromWhitelist(currentWord) === true) {
 							finalCensorText += `${currentWord} `;
 							currentWord = '';
 						} else {
@@ -165,18 +195,18 @@ class Censor {
  */
 
 /**
- * Read data from for worker
- */
-const { fixedAllowedChars, fixedAllowedWords, replaceString,
-    mixSpaceBetweenPrefixAndSuffix, prefixAllowedLettersCount, suffixAllowedLettersCount } = workerData;
-
-/**
  * Censoring a text function
  * @param text the plaintext
  * @param args the config arguments
  * @returns censored text
  */
 function censorText(text, whitelist) {
+	/**
+	 * Read data from for worker
+	 */
+	const { fixedAllowedChars, fixedAllowedWords, replaceString,
+    mixSpaceBetweenPrefixAndSuffix, prefixAllowedLettersCount, suffixAllowedLettersCount } = workerData;
+
     const censorObj = new Censor({
         whitelist,
         fixedAllowedChars,
@@ -184,14 +214,27 @@ function censorText(text, whitelist) {
         replaceString,
         mixSpaceBetweenPrefixAndSuffix,
         prefixAllowedLettersCount,
-        suffixAllowedLettersCount
+        suffixAllowedLettersCount,
+		allowedWordsPrefix: [
+			"ב",
+			"ה",
+			"ו",
+			"ל",
+			"מ",
+			"וב",
+			"וה",
+			"ול",
+			"ומ",
+		],
+		withChangeWordLength: true
     });
     const { censoredText, droppedWords } = censorObj.replaceFromJson(text);
 
     return { censoredText, droppedWords };
 }
 
-parentPort.on("message", (params) => {
+// Prevent error on testing
+parentPort && parentPort.on("message", (params) => {
 	/**
  * Try to invoke the censoring logic.
  * In case of fail exit with error code 1.
@@ -204,4 +247,6 @@ parentPort.on("message", (params) => {
 		process.exit(1);
 	}
 });
+
+module.exports = { Censor }
 

@@ -27,7 +27,7 @@ function createExpressApplication(configuration: IConfiguration) {
     			res.sendFile('/app/unauthorized.html');
             })
             app.all("/*",
-                passportClient.createLoggedInUserAuthorizeMiddleware({shouldRedirectToHome: true}),
+                passportClient.createLoggedInUserAuthorizeMiddleware({shouldRedirectToHome: true, shouldActive: Configuration.authentication.shouldUseAuth }),
                 proxy(Configuration.application.frontendUrl)
             );
             app.listen( application.port, () => {
